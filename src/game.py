@@ -75,7 +75,7 @@ while True:
             if data["lang"] == "en":
                 welcome_text = arial_bold.render("Welcome!", True, pygame.Color(data["accent_color"]))
             if data["lang"] == "ru":
-                welcome_text = arial_bold.render("Привет!", True, pygame.Color(data["accent_color"]))
+                welcome_text = arial_bold.render("Добро пожаловать!", True, pygame.Color(data["accent_color"]))
             if data["lang"] == "en":
                 language_select = pygame.image.load(data["assets_dir"] + "images/English_oobe_select_button.png").convert_alpha()
                 language_select_rect = language_select.get_rect(topleft=(256, 208))
@@ -85,7 +85,7 @@ while True:
             if data["lang"] == "en":
                 display.blit(welcome_text, (200, 20))
             if data["lang"] == "ru":
-                display.blit(welcome_text, (200, 20))
+                display.blit(welcome_text, (60, 20))
             next_button = pygame.image.load(data["assets_dir"] + "images/Next_button.png").convert_alpha()
             next_button_rect = next_button.get_rect(topleft=(256, 320))
             display.blit(next_button, next_button_rect)
@@ -142,5 +142,5 @@ while True:
                         cursor_x += cursor_x_add
         if event.type == pygame.QUIT:
             if data["first_launch"]:
-                save_json("data.json", reset)
+                save_json("data.json", RESET)
             sys.exit()
