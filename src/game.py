@@ -1,6 +1,7 @@
 import pygame
 import json
 import sys
+import os
 
 def load_json(filename):
     with open(filename, "r") as f:
@@ -24,6 +25,7 @@ def oobe_validate_nick(nick):
         return True
 
 data = load_json("data.json")
+
 RESET = {
     "first_launch": True,
     "nick": "",
@@ -31,7 +33,7 @@ RESET = {
     "background": "",
     "accent_color": "white",
     "lang": "en",
-    "assets_dir": "assets/"
+    "assets_dir": "assets"
 }
 
 pygame.init()
@@ -39,15 +41,14 @@ pygame.init()
 WIDTH = 640
 HEIGHT = 480
 
-menu_sound = pygame.mixer.Sound(data["assets_dir"] + "sounds/menu.mp3")
+menu_sound = pygame.mixer.Sound(os.path.join(data["assets_dir"], "sounds", "menu.mp3"))
 
 last_menu_sound = 0
 
-error_sound = pygame.mixer.Sound(data["assets_dir"] + "sounds/error.mp3")
+error_sound = pygame.mixer.Sound(os.path.join(data["assets_dir"], "sounds", "error.mp3"))
 
-arial_bold = pygame.font.Font(data["assets_dir"] + "fonts/ariblk.ttf", 50)
-arial_bold_small = pygame.font.Font(data["assets_dir"] + "fonts/ariblk.ttf", 15)
-
+arial_bold = pygame.font.Font(os.path.join(data["assets_dir"], "fonts", "ariblk.ttf"), 50)
+arial_bold_small = pygame.font.Font(os.path.join(data["assets_dir"], "fonts", "ariblk.ttf"), 15)
 
 if data["first_launch"]:
     scene = "oobe"
@@ -77,24 +78,24 @@ while True:
             if data["lang"] == "ru":
                 welcome_text = arial_bold.render("Добро пожаловать!", True, pygame.Color(data["accent_color"]))
             if data["lang"] == "en":
-                language_select = pygame.image.load(data["assets_dir"] + "images/English_oobe_select_button.png").convert_alpha()
+                language_select = pygame.image.load(os.path.join(data["assets_dir"], "images", "English_oobe_select_button.png")).convert_alpha()
                 language_select_rect = language_select.get_rect(topleft=(256, 208))
             if data["lang"] == "ru":
-                language_select = pygame.image.load(data["assets_dir"] + "images/Russian_oobe_select_button.png").convert_alpha()
+                language_select = pygame.image.load(os.path.join(data["assets_dir"], "images", "Russian_oobe_select_button.png")).convert_alpha()
                 language_select_rect = language_select.get_rect(topleft=(256, 208))
             if data["lang"] == "en":
                 display.blit(welcome_text, (200, 20))
             if data["lang"] == "ru":
                 display.blit(welcome_text, (60, 20))
-            next_button = pygame.image.load(data["assets_dir"] + "images/Next_button.png").convert_alpha()
+            next_button = pygame.image.load(os.path.join(data["assets_dir"], "images", "Next_button.png")).convert_alpha()
             next_button_rect = next_button.get_rect(topleft=(256, 320))
             display.blit(next_button, next_button_rect)
             display.blit(language_select, language_select_rect)
         if oobe_progress == "nick":
             if data["lang"] == "en":
-                nick_enterbar = pygame.image.load(data["assets_dir"] + "images/English_oobe_nick_enterbar.png").convert_alpha()
+                nick_enterbar = pygame.image.load(os.path.join(data["assets_dir"], "images", "English_oobe_nick_enterbar.png")).convert_alpha()
             if data["lang"] == "ru":
-                nick_enterbar = pygame.image.load(data["assets_dir"] + "images/Russian_oobe_nick_enterbar.png").convert_alpha()
+                nick_enterbar = pygame.image.load(os.path.join(data["assets_dir"], "images", "Russian_oobe_nick_enterbar.png")).convert_alpha()
             display.blit(nick_enterbar, (170, 215))
             display.blit(arial_bold_small.render(nick_input, False, pygame.Color("black")), (185, 242))
             pygame.draw.line(display, pygame.Color("black"), (cursor_x, 240), (cursor_x, 262), 2)
@@ -115,11 +116,6 @@ while True:
                 save_json("data.json", data)
         if scene == "oobe" and oobe_progress == "welcome" and event.type == pygame.MOUSEBUTTONDOWN and next_button_rect.collidepoint(mouse):
             oobe_progress = "nick"
-            del next_button
-            del welcome_text
-            del next_button_rect
-            del language_select
-            del language_select_rect
         if scene == "oobe" and oobe_progress == "nick":
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE and len(nick_input) > 0:
@@ -128,13 +124,8 @@ while True:
                 elif event.key in (pygame.K_LSHIFT, pygame.K_RSHIFT, pygame.K_LCTRL, pygame.K_RCTRL, pygame.K_LALT, pygame.K_RALT, pygame.K_LMETA, pygame.K_RMETA, pygame.K_MODE):
                     pass
                 elif event.key == pygame.K_RETURN:
-                    del cursor_x
-                    del cursor_x_add
-                    del cursor_x_minus
-                    del nick_enterbar
                     data["nick"] = nick_input
                     save_json("data.json", data)
-                    del nick_input
                     oobe_progress = "complete"
                 else:
                     if oobe_validate_nick(nick_input) and event.unicode.isprintable():
