@@ -1,0 +1,6 @@
+@echo off
+echo Compiling...
+pyinstaller --onefile --noconsole --name "DieToWin" --distpath ..\build --workpath ..\temp --specpath ..\temp ..\src\game.py
+del /S /Q ..\temp\*.*
+echo Compiled!
+echo Press any key to close script...
