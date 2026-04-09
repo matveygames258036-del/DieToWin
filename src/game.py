@@ -71,6 +71,8 @@ if scene == "menu":
 while True:
     display.fill(pygame.Color("blue"))
     mouse = pygame.mouse.get_pos()
+    exit_oobe_button = pygame.image.load(os.path.join(data["assets_dir"], "images", "Oobe_exit_button.png")).convert_alpha()
+    exit_oobe_button_rect = exit_oobe_button.get_rect(topleft=(0, 416))
     if scene == "oobe":
         if oobe_progress == "welcome":
             if data["lang"] == "en":
@@ -101,6 +103,9 @@ while True:
             pygame.draw.line(display, pygame.Color("black"), (cursor_x, 240), (cursor_x, 262), 2)
         if oobe_progress == "complete":
             pass
+        display.blit(exit_oobe_button, exit_oobe_button_rect)
+        if exit_oobe_button_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
+            pygame.event.post(pygame.event.Event(pygame.QUIT))
     if scene == "menu":
         if pygame.time.get_ticks() - last_menu_sound > 17000:
             menu_sound.play()
