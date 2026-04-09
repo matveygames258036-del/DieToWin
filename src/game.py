@@ -65,6 +65,8 @@ else:
 
 display = pygame.display.set_mode((WIDTH, HEIGHT))
 
+can_click = True
+
 if scene == "menu":
     menu_sound.play()
 
@@ -101,6 +103,9 @@ while True:
             display.blit(nick_enterbar, (170, 215))
             display.blit(arial_bold_small.render(nick_input, False, pygame.Color("black")), (185, 242))
             pygame.draw.line(display, pygame.Color("black"), (cursor_x, 240), (cursor_x, 262), 2)
+            next_button = pygame.image.load(os.path.join(data["assets_dir"], "images", "Next_button.png")).convert_alpha()
+            next_button_rect = next_button.get_rect(topleft=(256, 320))
+            display.blit(next_button, next_button_rect)
         if oobe_progress == "complete":
             pass
         display.blit(exit_oobe_button, exit_oobe_button_rect)
@@ -119,8 +124,9 @@ while True:
             else:
                 data["lang"] = "ru"
                 save_json("data.json", data)
-        if scene == "oobe" and oobe_progress == "welcome" and event.type == pygame.MOUSEBUTTONDOWN and next_button_rect.collidepoint(mouse):
+        if scene == "oobe" and oobe_progress == "welcome" and event.type == pygame.MOUSEBUTTONDOWN and next_button_rect.collidepoint(mouse) and can_click:
             oobe_progress = "nick"
+            can_click = False
         if scene == "oobe" and oobe_progress == "nick":
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE and len(nick_input) > 0:
@@ -136,6 +142,11 @@ while True:
                     if oobe_validate_nick(nick_input) and event.unicode.isprintable():
                         nick_input += event.unicode
                         cursor_x += cursor_x_add
+            if scene == "oobe" and oobe_progress == "nick" and event.type == pygame.MOUSEBUTTONDOWN and next_button_rect.collidepoint(mouse) and can_click:
+                oobe_progress = "complete"
+                can_click = False
+        if event.type == pygame.MOUSEBUTTONUP:
+            can_click = True
         if event.type == pygame.QUIT:
             if data["first_launch"]:
                 save_json("data.json", RESET)
